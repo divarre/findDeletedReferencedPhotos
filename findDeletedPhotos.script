@@ -1,8 +1,12 @@
--- Script to find all images in one or more albums that are referencing a deleted file.
+-- Find all photos in one or more albums that are referencing a deleted or missing file.
+
+-- Update the values below.
 
 set listOfAlbumNamesToScan to ["2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 set nameOfDeletedImageFilesAlbum to "Deleted Files"
 set referencedFilesFolderName to "/Users/myAccount/Google Drive/Google Photos"
+
+-- Do not change anything below.
 
 set photosWasAlreadyRunning to false
 
@@ -23,11 +27,11 @@ repeat with nameOfAlbumToScan in listOfAlbumNamesToScan
 		set totalToProcess to count of photosToProcess
 	end tell
 
-	set progress description to "Processing Images..."
+	set progress description to "Processing photos..."
 	set progress total steps to totalToProcess
 
 	repeat with i from 1 to length of photosToProcess
-		set progress additional description to "Processing image " & i & " of " & totalToProcess
+		set progress additional description to "Processing photo " & i & " of " & totalToProcess
 		set progress completed steps to i
 		
 		tell application "Photos"
@@ -47,6 +51,11 @@ repeat with nameOfAlbumToScan in listOfAlbumNamesToScan
 				set deletedImagesAlbum to container nameOfDeletedImageFilesAlbum
 			end if
 			add deletedItems to deletedImagesAlbum
+			if (count of deletedItems) is 1 then
+				display notification ((count of deletedItems) as string) & " file is missing from “" & nameOfAlbumToScan & "” and has been added to the “" & nameOfDeletedImageFilesAlbum & "” album."
+			else
+				display notification ((count of deletedItems) as string) & " files are missing from “" & nameOfAlbumToScan & "” and have been added to the “" & nameOfDeletedImageFilesAlbum & "” album."
+			end if
 		else
 			display notification "All files found for photos in “" & nameOfAlbumToScan & "”. No files are missing."
 		end if
